@@ -21,7 +21,7 @@ public class UserImgUtils {
         try {
             outputStream.close();
         } catch (Exception e) {
-            // e.printStackTrace();
+            e.printStackTrace();
         }
         return outputStream.toByteArray();
     }
@@ -37,7 +37,7 @@ public class UserImgUtils {
                 byteArrayOutputStream.write(temp, 0, size);
             }
         } catch (Exception e) {
-            // e.printStackTrace();
+            e.printStackTrace();
         }
         return byteArrayOutputStream.toByteArray();
     }
