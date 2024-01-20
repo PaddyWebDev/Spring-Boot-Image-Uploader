@@ -29,14 +29,21 @@ public class ImageController {
 
     @GetMapping("/GetImage/{FileName}")
     public ResponseEntity<?> downloadImage(@PathVariable String FileName) {
+        if (FileName == null)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("The Name is Required for the Image to be Deleted");
+
         byte[] ImgData = service.downloadImage(FileName);
         return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.valueOf("image/png")).body(ImgData);
     }
 
     @DeleteMapping("/DeleteImage/{Name}")
     public ResponseEntity<?> deleteImage(@PathVariable String Name) {
-        String removeImage = service.deleteImage(Name);
-        return ResponseEntity.status(HttpStatus.OK).body(removeImage);
+        if (Name != null) {
+            String removeImage = service.deleteImage(Name);
+            return ResponseEntity.status(HttpStatus.OK).body(removeImage);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("The Name is Required for the Image to be Deleted");
+        }
     }
 
 }
