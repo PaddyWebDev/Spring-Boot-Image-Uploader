@@ -3,6 +3,7 @@ package com.userservice.project.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,6 +31,12 @@ public class ImageController {
     public ResponseEntity<?> downloadImage(@PathVariable String FileName) {
         byte[] ImgData = service.downloadImage(FileName);
         return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.valueOf("image/png")).body(ImgData);
+    }
+
+    @DeleteMapping("/DeleteImage/{Name}")
+    public ResponseEntity<?> deleteImage(@PathVariable String Name) {
+        String removeImage = service.deleteImage(Name);
+        return ResponseEntity.status(HttpStatus.OK).body(removeImage);
     }
 
 }

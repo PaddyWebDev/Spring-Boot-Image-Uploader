@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.userservice.project.model.UserData;
+import com.userservice.project.model.Image;
 import com.userservice.project.repository.ImageStorageRepo;
 import com.userservice.project.util.UserImgUtils;
 
@@ -20,10 +20,11 @@ public class ImageStorageService {
 
     public String uploadImg(MultipartFile file) {
         try {
-            UserData userData = repo
-                    .save(UserData.builder().name(file.getOriginalFilename()).type(file.getContentType())
+            Image imageData = repo
+                    .save(Image.builder().name(file.getOriginalFilename()).type(file.getContentType())
                             .ImageData(UserImgUtils.compressImage(file.getBytes())).build());
-            if (userData != null) {
+
+            if (imageData != null) {
                 return "File Uploaded" + file.getOriginalFilename();
             }
         } catch (IOException e) {
@@ -33,8 +34,18 @@ public class ImageStorageService {
     }
 
     public byte[] downloadImage(String FileName) {
-        Optional<UserData> userOptional = repo.findByName(FileName);
-        byte[] Image = UserImgUtils.decompressImage(userOptional.get().getImageData());
+        Optional<Image> imageOptional = repo.findByName(FileName);
+        byte[] Image = UserImgUtils.decompressImage(imageOptional.get().getImageData());
         return Image;
+    }
+
+    public String deleteImage(String Name) {
+        Optional<Image> image = repo.findByName(Name);
+        if (image.isPresent()) {
+            Long Id = image.get().getId();
+            repo.deleteById(Id);
+            return "Deleted Successfully";
+        }
+        return "Failed";
     }
 }
