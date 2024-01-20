@@ -20,11 +20,10 @@ public class ImageStorageService {
 
     public String uploadImg(MultipartFile file) {
         try {
-            Image imageData = repo
+            Image image = repo
                     .save(Image.builder().name(file.getOriginalFilename()).type(file.getContentType())
                             .ImageData(UserImgUtils.compressImage(file.getBytes())).build());
-
-            if (imageData != null) {
+            if (image != null) {
                 return "File Uploaded" + file.getOriginalFilename();
             }
         } catch (IOException e) {
@@ -33,19 +32,28 @@ public class ImageStorageService {
         return null;
     }
 
-    public byte[] downloadImage(String FileName) {
-        Optional<Image> imageOptional = repo.findByName(FileName);
-        byte[] Image = UserImgUtils.decompressImage(imageOptional.get().getImageData());
-        return Image;
+    public String deleteImage(String FileName) {
+        try {
+            Optional<Image> image = repo.findByName(FileName);
+            if (image.isEmpty()) {
+                return "The Image Doesn't Exist";
+            } else {
+                Long Id = image.get().getId();
+                repo.deleteById(Id);
+                return "Deleted Successfully";
+            }
+        } catch (Exception e) {
+            return "Error Occured" + e.getMessage();
+        }
     }
 
-    public String deleteImage(String Name) {
-        Optional<Image> image = repo.findByName(Name);
-        if (image.isPresent()) {
-            Long Id = image.get().getId();
-            repo.deleteById(Id);
-            return "Deleted Successfully";
+    public byte[] downloadImage(String FileName) {
+        Optional<Image> imageData = repo.findByName(FileName);
+        if (imageData.isEmpty()) {
+            return null;
         }
-        return "Failed";
+        byte[] Image = UserImgUtils.decompressImage(imageData.get().getImageData());
+        return Image;
+
     }
 }
